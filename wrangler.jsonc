@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "secret-santa-draw",
+  "compatibility_date": "2026-10-01",
+  // Static site only — serve the Vite build output, no Worker script needed.
+  "assets": {
+    "directory": "./dist"
+  },
+  "routes": [
+    {
+      "pattern": "secret-santa-draw.samnicholls.dev",
+      "custom_domain": true
+    }
+  ]
+}
