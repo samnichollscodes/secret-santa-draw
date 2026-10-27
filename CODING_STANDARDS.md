@@ -23,7 +23,8 @@ This project is written in **TypeScript**. All source code goes in `.ts` / `.tsx
 - Use function components and hooks only. Export one component per file as the default export.
 - Keep render pure. Randomness (`Math.random`, `crypto`) belongs in a lazy `useState` initialiser or
   an event handler, not in the component body.
-- Keep non-UI logic (the draw, encoding) in `src/lib/` as plain, testable functions.
+- Keep non-UI logic (the draw, encoding, parsing names, saved state) in `src/lib/` as plain,
+  testable functions. Components stay thin and call into it.
 
 ## Styling
 
@@ -61,7 +62,7 @@ The organiser must never see who drew whom. Nothing on the organiser screen (UI,
 
 ## Accessibility
 
-The app aims for **WCAG 2.2 AA**. `npm run test:a11y` checks it with Playwright and axe-core in
+The app aims for **WCAG 2.2 AA**. `npm run test:e2e` checks it with Playwright and axe-core in
 `e2e/`, on desktop and mobile.
 
 - **Every screen and state gets a scan.** That covers the organiser form, its error state, the draw
@@ -83,17 +84,30 @@ The app aims for **WCAG 2.2 AA**. `npm run test:a11y` checks it with Playwright 
 Automated checks catch roughly a third of accessibility problems. Before a release, also try the
 flow with VoiceOver (Cmd+F5) and at 200% zoom.
 
+## Testing
+
+- **Unit tests (Vitest)** live next to the code as `src/**/*.test.ts` and run with `npm test`.
+  Anything in `src/lib/` gets tests, especially the draw: its tests run each household setup
+  hundreds of times and check every rule (nobody draws themselves or their own household, everyone
+  gives and receives once, one single loop). Add a case there for any new draw rule.
+- **End-to-end tests (Playwright)** live in `e2e/` and run with `npm run test:e2e`. They drive the
+  real app on desktop and mobile, covering user flows (households, sent tracking, start over) and
+  the accessibility scans.
+- **No fixed waits** (`waitForTimeout`) in Playwright tests. Wait for something visible, or let
+  `expectNoA11yViolations` wait for animations to finish.
+
 ## Before committing
 
-Run all four and make sure they pass. `npm run lint:fix` fixes most lint and formatting issues
+Run all five and make sure they pass. `npm run lint:fix` fixes most lint and formatting issues
 for you.
 
 ```bash
 npm run typecheck
 npm run lint
+npm test
 npm run build
-npm run test:a11y
+npm run test:e2e
 ```
 
-The first time you run the accessibility tests, install the browser with
+The first time you run the end-to-end tests, install the browser with
 `npx playwright install chromium`.

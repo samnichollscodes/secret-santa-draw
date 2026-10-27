@@ -45,6 +45,19 @@ button {
   font: inherit;
 }
 
+/* Hidden visually but still read by screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ---------- Snow ---------- */
 .snow {
   position: fixed;
@@ -165,6 +178,8 @@ button {
 .card {
   background: var(--cream);
   color: var(--ink);
+  /* The page is dark, but cards are light: draw native controls to match. */
+  color-scheme: light;
   border-radius: 18px;
   padding: 28px 24px;
   box-shadow:
@@ -322,6 +337,18 @@ button {
   gap: 8px;
 }
 
+.chips__item {
+  display: flex;
+}
+
+/* People who won't draw each other, wrapped together in one dashed pill. */
+.household {
+  gap: 4px;
+  padding: 3px;
+  border: 2px dashed var(--pine-500);
+  border-radius: 999px;
+}
+
 .chip {
   display: inline-flex;
   align-items: center;
@@ -355,6 +382,13 @@ button {
     transform: scale(0.6);
     opacity: 0;
   }
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  line-height: 1.45;
+  margin: 8px 0 0;
 }
 
 .empty {
@@ -392,7 +426,37 @@ button {
 
 .links__actions {
   display: flex;
+  align-items: center;
   gap: 8px;
+}
+
+.links__row--sent .links__name {
+  color: var(--ink-soft);
+}
+
+.sent {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.sent input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--pine-500);
+  cursor: pointer;
+}
+
+.sent-progress {
+  font-weight: 700;
+  color: var(--pine-700);
+  margin: 0 0 4px;
 }
 
 /* ---------- Reveal ---------- */

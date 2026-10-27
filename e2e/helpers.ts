@@ -16,7 +16,22 @@ const SCAN_STYLES = `
   .snow, .confetti, .card::before { display: none !important; }
 `
 
+// Waits for one-off animations (chips popping in, the present opening) so axe
+// doesn't measure text while it's still fading in. The snow loops forever, so
+// it's skipped.
+async function waitForAnimations(page: Page): Promise<void> {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.effect?.getComputedTiming().iterations !== Number.POSITIVE_INFINITY)
+        .map((a) => a.finished.catch(() => undefined)),
+    ),
+  )
+}
+
 export async function expectNoA11yViolations(page: Page): Promise<void> {
+  await waitForAnimations(page)
   const style = await page.addStyleTag({ content: SCAN_STYLES })
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
   await style.evaluate((el) => el.parentNode?.removeChild(el))

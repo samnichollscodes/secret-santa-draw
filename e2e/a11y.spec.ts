@@ -52,8 +52,6 @@ test.describe('gift link', () => {
     await page.goto(url)
     await page.getByRole('button', { name: 'Unwrap your present' }).click()
     await expect(page.getByText("You're buying for")).toBeVisible()
-    // Let the reveal and confetti animations finish before scanning.
-    await page.waitForTimeout(2600)
     await expectNoA11yViolations(page)
   })
 

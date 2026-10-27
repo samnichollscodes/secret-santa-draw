@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "test:a11y": "playwright test"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "react": "^19.3.1",
@@ -28,6 +29,7 @@
     "oxlint": "^1.88.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.4",
+    "vitest": "^5.0.5",
     "wrangler": "^4.153.0"
   }
 }
