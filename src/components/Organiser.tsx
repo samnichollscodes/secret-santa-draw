@@ -219,7 +219,7 @@ export default function Organiser() {
         Draw names ✨
       </button>
       {names.length > 0 && names.length < MIN_PEOPLE && (
-        <p className="muted center">Add {MIN_PEOPLE - names.length} more to draw.</p>
+        <p className="muted center draw-hint">Add {MIN_PEOPLE - names.length} more to draw.</p>
       )}
     </section>
   )

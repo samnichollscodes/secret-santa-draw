@@ -293,6 +293,10 @@ button {
   padding: 16px;
 }
 
+.draw-hint {
+  margin: 14px 0 0;
+}
+
 .btn--small {
   padding: 8px 14px;
 }
