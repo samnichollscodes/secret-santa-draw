@@ -51,7 +51,9 @@ export default function Reveal({ token }: RevealProps) {
     return (
       <section className="card center">
         <h2>Oh no, a broken bauble! 🎄</h2>
-        <p className="muted">This link doesn't look quite right. Ask whoever sent it for a fresh copy.</p>
+        <p className="muted">
+          This link doesn't look quite right. Ask whoever sent it for a fresh copy.
+        </p>
       </section>
     )
   }
@@ -88,6 +90,7 @@ export default function Reveal({ token }: RevealProps) {
         </div>
 
         <button
+          type="button"
           className="gift"
           onClick={unwrap}
           disabled={stage !== 'idle'}

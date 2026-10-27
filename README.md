@@ -24,4 +24,4 @@ deployed site, not on `localhost`.
 
 ## Contributing
 
-See [CODING_STANDARDS.md](CODING_STANDARDS.md). The project is TypeScript; run `npm run typecheck`, `npm run lint` and `npm run build` before committing.
+See [CODING_STANDARDS.md](CODING_STANDARDS.md). The project is TypeScript, linted and formatted with Biome. Run `npm run typecheck`, `npm run lint` and `npm run build` before committing (`npm run lint:fix` fixes most issues).

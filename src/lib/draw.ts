@@ -65,7 +65,7 @@ export function encodeAssignment({ giver, recipient, note }: Assignment): string
   const out = new Uint8Array(KEY_LENGTH + data.length)
   out.set(key)
   data.forEach((b, i) => {
-    out[KEY_LENGTH + i] = b ^ key[i % KEY_LENGTH] ^ (i * 31) % 256
+    out[KEY_LENGTH + i] = b ^ key[i % KEY_LENGTH] ^ ((i * 31) % 256)
   })
   return toBase64Url(out)
 }
@@ -74,7 +74,7 @@ export function decodeAssignment(token: string): Assignment | null {
   try {
     const bytes = fromBase64Url(token)
     const key = bytes.slice(0, KEY_LENGTH)
-    const data = bytes.slice(KEY_LENGTH).map((b, i) => b ^ key[i % KEY_LENGTH] ^ (i * 31) % 256)
+    const data = bytes.slice(KEY_LENGTH).map((b, i) => b ^ key[i % KEY_LENGTH] ^ ((i * 31) % 256))
     const { g, r, n } = JSON.parse(new TextDecoder().decode(data)) as Partial<EncodedAssignment>
     if (typeof g !== 'string' || typeof r !== 'string') return null
     return { giver: g, recipient: r, note: typeof n === 'string' ? n : undefined }

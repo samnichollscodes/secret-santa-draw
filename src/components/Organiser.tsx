@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
 import { drawNames, encodeAssignment, giftLink } from '../lib/draw'
 
 const STORAGE_KEY = 'nm-secret-santa'
@@ -82,7 +82,9 @@ export default function Organiser() {
   }
 
   function startOver() {
-    if (!window.confirm('Start over? The links you have already generated will still work, but this list will be cleared.')) return
+    const message =
+      'Start over? The links you have already generated will still work, but this list will be cleared.'
+    if (!window.confirm(message)) return
     setLinks(null)
   }
 
@@ -122,13 +124,20 @@ export default function Organiser() {
           {links.map((link) => (
             <li key={link.giver} className="links__row">
               <span className="links__name">
-                <span className="tag" aria-hidden="true">🎁</span> For <strong>{link.giver}</strong>
+                <span className="tag" aria-hidden="true">
+                  🎁
+                </span>{' '}
+                For <strong>{link.giver}</strong>
               </span>
               <span className="links__actions">
-                <button className="btn btn--ghost" onClick={() => copy(link.url, link.giver)}>
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  onClick={() => copy(link.url, link.giver)}
+                >
                   {copied === link.giver ? 'Copied!' : 'Copy link'}
                 </button>
-                <button className="btn btn--small" onClick={() => share(link)}>
+                <button type="button" className="btn btn--small" onClick={() => share(link)}>
                   Share
                 </button>
               </span>
@@ -136,10 +145,10 @@ export default function Organiser() {
           ))}
         </ul>
         <div className="row row--end">
-          <button className="btn btn--ghost" onClick={() => copy(allText, '__all')}>
+          <button type="button" className="btn btn--ghost" onClick={() => copy(allText, '__all')}>
             {copied === '__all' ? 'Copied all!' : 'Copy all links'}
           </button>
-          <button className="btn btn--ghost" onClick={startOver}>
+          <button type="button" className="btn btn--ghost" onClick={startOver}>
             Start over
           </button>
         </div>
@@ -173,7 +182,12 @@ export default function Organiser() {
           {names.map((name) => (
             <li key={name} className="chip">
               {name}
-              <button className="chip__x" onClick={() => removeName(name)} aria-label={`Remove ${name}`}>
+              <button
+                type="button"
+                className="chip__x"
+                onClick={() => removeName(name)}
+                aria-label={`Remove ${name}`}
+              >
                 ×
               </button>
             </li>
@@ -196,7 +210,12 @@ export default function Organiser() {
 
       {error && <p className="error">{error}</p>}
 
-      <button className="btn btn--big" onClick={runDraw} disabled={names.length < MIN_PEOPLE}>
+      <button
+        type="button"
+        className="btn btn--big"
+        onClick={runDraw}
+        disabled={names.length < MIN_PEOPLE}
+      >
         Draw names ✨
       </button>
       {names.length > 0 && names.length < MIN_PEOPLE && (
