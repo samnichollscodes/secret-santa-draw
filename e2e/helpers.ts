@@ -11,9 +11,14 @@ const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 // Purely decorative layers that axe can't see past are hidden too: the snow,
 // the confetti and the candy-cane stripe on the cards (which sits in the
 // card's top padding and never overlaps text).
+// While a modal dialog is open, the page behind it can't be reached, but axe
+// doesn't understand the top layer dialogs sit in and gives up on the dialog's
+// contrast because it "overlaps" that page. So only the dialog is left showing.
 const SCAN_STYLES = `
   body { background: #2f5136 !important; }
   .snow, .confetti, .card::before { display: none !important; }
+  body:has(dialog[open]) * { visibility: hidden !important; }
+  dialog[open], dialog[open] * { visibility: visible !important; }
 `
 
 // Waits for one-off animations (chips popping in, the present opening) so axe

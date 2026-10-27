@@ -1,11 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { formatNames } from '../lib/draw'
 import type { GiftLink } from '../lib/storage'
+import ConfirmDialog from './ConfirmDialog'
 
 type DrawResultsProps = {
   links: GiftLink[]
   onLinksChange: (links: GiftLink[]) => void
   onStartOver: () => void
+}
+
+// Text the browser wouldn't let us copy, shown so it can be copied by hand.
+type ManualCopy = {
+  label: string
+  text: string
 }
 
 const ALL = '__all'
@@ -14,40 +21,42 @@ function shareMessage(giver: string): string {
   return `🎅 ${giver}, your Secret Santa is ready! Open this link (just you!) to unwrap who you've got:`
 }
 
-function confirmStartOver(links: GiftLink[]): boolean {
-  const sent = links.filter((l) => l.sent).map((l) => l.giver)
-  if (sent.length === 0) {
-    return window.confirm("Start over? These links will be thrown away and you'll draw again.")
-  }
-  return window.confirm(
-    `You've already sent links to ${formatNames(sent)}. ` +
-      "Their old links will still open, but they'll show this draw, not the new one, so everyone would need a new link.\n\n" +
-      'Start over anyway?',
-  )
-}
-
 export default function DrawResults({ links, onLinksChange, onStartOver }: DrawResultsProps) {
   const [copied, setCopied] = useState<string | null>(null)
+  const [manualCopy, setManualCopy] = useState<ManualCopy | null>(null)
+  const [confirming, setConfirming] = useState(false)
+  const manualCopyRef = useRef<HTMLTextAreaElement>(null)
   const sentCount = links.filter((l) => l.sent).length
+  const sentNames = links.filter((l) => l.sent).map((l) => l.giver)
+
+  // Each time there's something new to copy by hand, select it ready to copy.
+  useEffect(() => {
+    if (!manualCopy) return
+    manualCopyRef.current?.focus()
+    manualCopyRef.current?.select()
+  }, [manualCopy])
 
   function setSent(giver: string, sent: boolean) {
     onLinksChange(links.map((l) => (l.giver === giver ? { ...l, sent } : l)))
   }
 
-  async function copy(text: string, id: string): Promise<boolean> {
+  async function copy(text: string, id: string, label: string): Promise<boolean> {
     try {
       await navigator.clipboard.writeText(text)
+      setManualCopy(null)
       setCopied(id)
       setTimeout(() => setCopied((c) => (c === id ? null : c)), 2000)
       return true
     } catch {
-      window.prompt('Copy this link:', text)
+      // Copying is blocked here (some in-app browsers do this), so show the
+      // text instead. We don't use window.prompt: those browsers block it too.
+      setManualCopy({ label, text })
       return false
     }
   }
 
   async function copyLink(link: GiftLink) {
-    if (await copy(link.url, link.giver)) setSent(link.giver, true)
+    if (await copy(link.url, link.giver, `${link.giver}'s link`)) setSent(link.giver, true)
   }
 
   async function share(link: GiftLink) {
@@ -63,11 +72,8 @@ export default function DrawResults({ links, onLinksChange, onStartOver }: DrawR
         // Sharing isn't working here — fall back to copying instead.
       }
     }
-    if (await copy(`${text}\n${link.url}`, link.giver)) setSent(link.giver, true)
-  }
-
-  function startOver() {
-    if (confirmStartOver(links)) onStartOver()
+    const message = `${text}\n${link.url}`
+    if (await copy(message, link.giver, `${link.giver}'s message`)) setSent(link.giver, true)
   }
 
   const allText = links.map((l) => `${l.giver}: ${l.url}`).join('\n')
@@ -112,14 +118,67 @@ export default function DrawResults({ links, onLinksChange, onStartOver }: DrawR
           </li>
         ))}
       </ul>
+
+      {manualCopy && (
+        <div className="manual-copy">
+          <label className="field">
+            <span>This browser blocked copying. Here's {manualCopy.label} to copy yourself:</span>
+            <textarea
+              ref={manualCopyRef}
+              className="input manual-copy__text"
+              value={manualCopy.text}
+              readOnly
+              rows={3}
+              onFocus={(e) => e.target.select()}
+            />
+          </label>
+          <p className="hint">Tick "Sent" once you've sent it.</p>
+          <div className="row row--end">
+            <button type="button" className="btn btn--ghost" onClick={() => setManualCopy(null)}>
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="row row--end">
-        <button type="button" className="btn btn--ghost" onClick={() => copy(allText, ALL)}>
+        <button
+          type="button"
+          className="btn btn--ghost"
+          onClick={() => copy(allText, ALL, 'every link')}
+        >
           {copied === ALL ? 'Copied all!' : 'Copy all links'}
         </button>
-        <button type="button" className="btn btn--ghost" onClick={startOver}>
+        <button type="button" className="btn btn--ghost" onClick={() => setConfirming(true)}>
           Start over
         </button>
       </div>
+
+      <ConfirmDialog
+        open={confirming}
+        title="Start over?"
+        confirmLabel="Yes, start over"
+        cancelLabel="Keep these links"
+        onConfirm={() => {
+          setConfirming(false)
+          onStartOver()
+        }}
+        onCancel={() => setConfirming(false)}
+      >
+        {sentNames.length === 0 ? (
+          <p>These links will be thrown away and you'll draw again with the same names.</p>
+        ) : (
+          <>
+            <p>
+              You've already sent links to <strong>{formatNames(sentNames)}</strong>.
+            </p>
+            <p>
+              Their old links will still open, but they'll show this draw, not the new one. Everyone
+              would need a new link.
+            </p>
+          </>
+        )}
+      </ConfirmDialog>
     </section>
   )
 }

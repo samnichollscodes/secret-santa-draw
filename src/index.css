@@ -824,3 +824,59 @@ button {
     animation: none;
   }
 }
+
+/* ---------- Dialogs ---------- */
+.dialog {
+  border: 0;
+  border-radius: 18px;
+  padding: 24px;
+  width: min(440px, calc(100vw - 32px));
+  background: var(--cream);
+  color: var(--ink);
+  color-scheme: light;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(232, 193, 90, 0.6);
+}
+
+.dialog::backdrop {
+  background: rgba(5, 18, 13, 0.7);
+}
+
+.dialog__title {
+  font-family: var(--font-display);
+  color: var(--berry-dark);
+  font-size: 1.5rem;
+  margin: 0 0 10px;
+}
+
+.dialog__body p {
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.dialog .row--end {
+  margin-top: 8px;
+}
+
+/* ---------- Copy fallback ---------- */
+.manual-copy {
+  margin-top: 16px;
+  padding: 4px 14px 14px;
+  border: 2px dashed var(--gold);
+  border-radius: 12px;
+}
+
+.manual-copy .field {
+  margin: 12px 0 0;
+}
+
+.manual-copy__text {
+  resize: vertical;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+.manual-copy .row--end {
+  margin-top: 8px;
+}

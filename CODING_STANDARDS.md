@@ -23,6 +23,10 @@ This project is written in **TypeScript**. All source code goes in `.ts` / `.tsx
 - Use function components and hooks only. Export one component per file as the default export.
 - Keep render pure. Randomness (`Math.random`, `crypto`) belongs in a lazy `useState` initialiser or
   an event handler, not in the component body.
+- **No native pop-ups** (`window.confirm`, `alert`, `prompt`). Embedded and in-app browsers, like
+  links opened inside WhatsApp or Instagram, can silently answer them "Cancel" without showing
+  anything. Use `ConfirmDialog` (an on-page `<dialog>`) instead. Biome's `noAlert` rule enforces
+  this, and the Playwright tests fail if a native pop-up appears.
 - Keep non-UI logic (the draw, encoding, parsing names, saved state) in `src/lib/` as plain,
   testable functions. Components stay thin and call into it.
 
