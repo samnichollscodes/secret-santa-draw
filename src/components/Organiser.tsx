@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useState } from 'react'
+import { type SubmitEvent, useEffect, useState } from 'react'
 import { drawNames, encodeAssignment, giftLink } from '../lib/draw'
 
 const STORAGE_KEY = 'nm-secret-santa'
@@ -42,7 +42,7 @@ export default function Organiser() {
     }
   }, [names, note, links])
 
-  function addNames(e: FormEvent<HTMLFormElement>) {
+  function addNames(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const incoming = input
       .split(/[,\n]/)

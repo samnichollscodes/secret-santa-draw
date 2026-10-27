@@ -62,6 +62,7 @@
         }
       },
       "suspicious": {
+        "noDeprecatedImports": "error",
         "noConsole": "warn",
         "noExplicitAny": "error",
         "noEmptyBlockStatements": "error"

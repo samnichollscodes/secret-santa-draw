@@ -41,6 +41,10 @@ This project is written in **TypeScript**. All source code goes in `.ts` / `.tsx
 - **Linting** uses Biome's recommended rules, plus extra code-smell checks: overly complex
   functions, unused variables and imports, `any`, non-null `!`, leftover `console` calls, empty
   blocks, `interface` instead of `type`, and missing `import type`.
+- **No deprecated imports.** `noDeprecatedImports` fails the lint on anything marked
+  `@deprecated`, including React's own types (for example, use `SubmitEvent`, not `FormEvent`, for
+  `onSubmit`). TypeScript itself never reports deprecations; your editor's strikethrough is only a
+  hint, so this rule is what enforces it.
 - **Don't switch rules off to get a clean run.** If a rule really doesn't fit one spot, add a
   `// biome-ignore <rule>: <reason>` comment on that line, with a real reason.
 - oxlint also runs as part of `npm run lint`, alongside Biome.
