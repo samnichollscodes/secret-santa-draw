@@ -85,7 +85,7 @@ export default function Organiser() {
   }
 
   async function share(link) {
-    const text = `🎅 ${link.giver}, your Nicholls & Moore Secret Santa is ready! Open this link (just you!) to unwrap who you've got:`
+    const text = `🎅 ${link.giver}, your Secret Santa is ready! Open this link (just you!) to unwrap who you've got:`
     if (navigator.share) {
       try {
         await navigator.share({ title: 'Secret Santa', text, url: link.url })

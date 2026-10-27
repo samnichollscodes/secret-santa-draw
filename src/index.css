@@ -1,4 +1,4 @@
-/* Nicholls & Moore Secret Santa — festive night theme */
+/* Secret Santa — festive night theme */
 :root {
   --pine-900: #0b231a;
   --pine-800: #0f2e22;
@@ -95,39 +95,29 @@ button {
   margin-bottom: 28px;
 }
 
-.brand__families {
+.brand__eyebrow {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(2.1rem, 8vw, 3.4rem);
-  letter-spacing: 0.02em;
-  margin: 8px 0 0;
-  line-height: 1.1;
+  font-weight: 600;
+  font-size: clamp(0.8rem, 3vw, 0.95rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
   color: var(--cream);
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
-}
-
-.brand__amp {
-  font-family: var(--font-script);
-  font-weight: 400;
-  color: var(--gold);
-  font-size: 1.25em;
-  padding: 0 0.08em;
+  margin: 10px 0 12px;
+  opacity: 0.85;
 }
 
 .brand__title {
   font-family: var(--font-script);
-  font-size: clamp(2.2rem, 9vw, 3.4rem);
+  font-weight: 400;
+  font-size: clamp(3.4rem, 15vw, 5.2rem);
+  line-height: 1.2;
   color: var(--gold);
-  margin: -4px 0 0;
-  text-shadow: 0 0 24px rgba(232, 193, 90, 0.35);
-}
-
-.brand--small .brand__families {
-  font-size: clamp(1.5rem, 6vw, 2.1rem);
+  margin: 0;
+  text-shadow: 0 0 28px rgba(232, 193, 90, 0.35);
 }
 
 .brand--small .brand__title {
-  font-size: clamp(1.6rem, 7vw, 2.3rem);
+  font-size: clamp(2.4rem, 11vw, 3.4rem);
 }
 
 /* Holly sprig */

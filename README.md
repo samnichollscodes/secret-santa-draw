@@ -1,4 +1,4 @@
-# Nicholls & Moore Secret Santa
+# Secret Santa
 
 A tiny, server-free Secret Santa draw.
 
