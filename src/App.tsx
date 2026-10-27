@@ -4,9 +4,11 @@ import Organiser from './components/Organiser'
 import Reveal from './components/Reveal'
 import Snow from './components/Snow'
 
+type Route = { page: 'organiser' } | { page: 'gift'; token: string }
+
 // Hash routing keeps the gift token out of server logs and lets the app be
 // hosted on any static host without rewrite rules.
-function useHashRoute() {
+function useHashRoute(): Route {
   const [hash, setHash] = useState(window.location.hash)
   useEffect(() => {
     const onChange = () => setHash(window.location.hash)

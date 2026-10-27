@@ -21,3 +21,7 @@ npm run dev
 `npm run build` outputs a static site in `dist/` that can be hosted anywhere (GitHub Pages,
 Netlify, Vercel…). The links use the address the app is opened from, so do the draw on the
 deployed site, not on `localhost`.
+
+## Contributing
+
+See [CODING_STANDARDS.md](CODING_STANDARDS.md). The project is TypeScript; run `npm run typecheck`, `npm run lint` and `npm run build` before committing.

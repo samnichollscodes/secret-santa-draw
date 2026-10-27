@@ -1,4 +1,8 @@
-export default function Header({ small = false }) {
+type HeaderProps = {
+  small?: boolean
+}
+
+export default function Header({ small = false }: HeaderProps) {
   return (
     <header className={`brand ${small ? 'brand--small' : ''}`}>
       <div className="brand__holly" aria-hidden="true">

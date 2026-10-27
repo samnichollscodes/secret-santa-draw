@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { decodeAssignment } from '../lib/draw'
 
+type Stage = 'idle' | 'shaking' | 'open'
+
 const CONFETTI_COLOURS = ['#e8c15a', '#c8102e', '#f6efe1', '#1f7a4d', '#ffd98a']
 
 function makeConfetti() {
@@ -36,10 +38,14 @@ function Confetti() {
   )
 }
 
-export default function Reveal({ token }) {
+type RevealProps = {
+  token: string
+}
+
+export default function Reveal({ token }: RevealProps) {
   const assignment = useMemo(() => decodeAssignment(token), [token])
   // idle → shaking → open
-  const [stage, setStage] = useState('idle')
+  const [stage, setStage] = useState<Stage>('idle')
 
   if (!assignment) {
     return (

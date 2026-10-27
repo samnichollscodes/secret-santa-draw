@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function makeFlakes(count) {
+function makeFlakes(count: number) {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
@@ -13,7 +13,11 @@ function makeFlakes(count) {
 }
 
 // Gently falling snowflakes, purely decorative.
-export default function Snow({ count = 60 }) {
+type SnowProps = {
+  count?: number
+}
+
+export default function Snow({ count = 60 }: SnowProps) {
   const [flakes] = useState(() => makeFlakes(count))
 
   return (

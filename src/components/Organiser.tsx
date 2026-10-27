@@ -1,36 +1,48 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { drawNames, encodeAssignment, giftLink } from '../lib/draw'
 
 const STORAGE_KEY = 'nm-secret-santa'
 const MIN_PEOPLE = 3
 
-function loadSaved() {
+type GiftLink = {
+  giver: string
+  url: string
+}
+
+type SavedDraw = {
+  names: string[]
+  note: string
+  links: GiftLink[] | null
+}
+
+function loadSaved(): Partial<SavedDraw> {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? {}
+    return (JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Partial<SavedDraw>) ?? {}
   } catch {
     return {}
   }
 }
 
 export default function Organiser() {
-  const saved = loadSaved()
-  const [names, setNames] = useState(saved.names ?? [])
+  const [saved] = useState(loadSaved)
+  const [names, setNames] = useState<string[]>(saved.names ?? [])
   const [note, setNote] = useState(saved.note ?? '')
   // Only the giver and their opaque token are kept — never the recipient.
-  const [links, setLinks] = useState(saved.links ?? null)
+  const [links, setLinks] = useState<GiftLink[] | null>(saved.links ?? null)
   const [input, setInput] = useState('')
   const [error, setError] = useState('')
-  const [copied, setCopied] = useState(null)
+  const [copied, setCopied] = useState<string | null>(null)
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ names, note, links }))
+      const draw: SavedDraw = { names, note, links }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(draw))
     } catch {
       // Storage unavailable (private mode etc.) — the app still works.
     }
   }, [names, note, links])
 
-  function addNames(e) {
+  function addNames(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const incoming = input
       .split(/[,\n]/)
@@ -48,7 +60,7 @@ export default function Organiser() {
     setError('')
   }
 
-  function removeName(name) {
+  function removeName(name: string) {
     setNames(names.filter((n) => n !== name))
   }
 
@@ -74,7 +86,7 @@ export default function Organiser() {
     setLinks(null)
   }
 
-  async function copy(text, id) {
+  async function copy(text: string, id: string) {
     try {
       await navigator.clipboard.writeText(text)
       setCopied(id)
@@ -84,7 +96,7 @@ export default function Organiser() {
     }
   }
 
-  async function share(link) {
+  async function share(link: GiftLink) {
     const text = `🎅 ${link.giver}, your Secret Santa is ready! Open this link (just you!) to unwrap who you've got:`
     if (navigator.share) {
       try {
