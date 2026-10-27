@@ -55,13 +55,41 @@ This project is written in **TypeScript**. All source code goes in `.ts` / `.tsx
 The organiser must never see who drew whom. Nothing on the organiser screen (UI, list order,
 `localStorage`, console) may reveal a recipient. Only the giver's own link holds their assignment.
 
+## Accessibility
+
+The app aims for **WCAG 2.2 AA**. `npm run test:a11y` checks it with Playwright and axe-core in
+`e2e/`, on desktop and mobile.
+
+- **Every screen and state gets a scan.** That covers the organiser form, its error state, the draw
+  results, the wrapped and opened present, and the broken-link page. A new screen or state needs a
+  test that calls `expectNoA11yViolations`.
+- **Everything works by keyboard,** and the tests prove it for the main flows. Use real `<button>`s
+  and `<input>`s, not clickable `div`s.
+- **Changing content is announced.** The revealed name sits in an `aria-live` region. Keep it that
+  way if the reveal changes.
+- **Contrast is 4.5:1 for normal text** and 3:1 for large text. Check new colours against the
+  darkest and lightest parts of the background.
+- **Keep text on solid colours.** axe can't measure contrast over gradients or background images,
+  and it quietly skips those checks. Put depth on buttons and cards with shadows instead.
+- **Decorations stay out of the way.** Mark them `aria-hidden`, and keep them from overlapping
+  text. The scan helper hides the snow, the confetti and the card stripe, and scans against the
+  lightest part of the page gradient. Don't widen that list to make a failing check pass.
+- Respect `prefers-reduced-motion`, as covered under Styling.
+
+Automated checks catch roughly a third of accessibility problems. Before a release, also try the
+flow with VoiceOver (Cmd+F5) and at 200% zoom.
+
 ## Before committing
 
-Run all three and make sure they pass. `npm run lint:fix` fixes most lint and formatting issues
+Run all four and make sure they pass. `npm run lint:fix` fixes most lint and formatting issues
 for you.
 
 ```bash
 npm run typecheck
 npm run lint
 npm run build
+npm run test:a11y
 ```
+
+The first time you run the accessibility tests, install the browser with
+`npx playwright install chromium`.

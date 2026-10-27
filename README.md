@@ -24,4 +24,4 @@ deployed site, not on `localhost`.
 
 ## Contributing
 
-See [CODING_STANDARDS.md](CODING_STANDARDS.md). The project is TypeScript, linted and formatted with Biome. Run `npm run typecheck`, `npm run lint` and `npm run build` before committing (`npm run lint:fix` fixes most issues).
+See [CODING_STANDARDS.md](CODING_STANDARDS.md). The project is TypeScript, linted and formatted with Biome, and tested for accessibility (WCAG 2.2 AA) with Playwright and axe-core. Run `npm run typecheck`, `npm run lint`, `npm run build` and `npm run test:a11y` before committing (`npm run lint:fix` fixes most issues). Before the first accessibility test run, install the browser with `npx playwright install chromium`.
