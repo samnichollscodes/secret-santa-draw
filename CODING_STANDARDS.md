@@ -95,8 +95,27 @@ flow with VoiceOver (Cmd+F5) and at 200% zoom.
   hundreds of times and check every rule (nobody draws themselves or their own household, everyone
   gives and receives once, one single loop). Add a case there for any new draw rule.
 - **End-to-end tests (Playwright)** live in `e2e/` and run with `npm run test:e2e`. They drive the
-  real app on desktop and mobile, covering user flows (households, sent tracking, start over) and
-  the accessibility scans.
+  real app on desktop and mobile. There's one spec file per area:
+
+  | File                   | Covers                                                         |
+  | ---------------------- | -------------------------------------------------------------- |
+  | `name-entry.spec.ts`   | Adding and removing names, households, the draw button, saving |
+  | `draw.spec.ts`         | The real draw: valid loops, households, link order, privacy    |
+  | `draw-results.spec.ts` | Copying, sharing, sent tracking, starting over                 |
+  | `reveal.spec.ts`       | The gift page: greeting, unwrapping, messages, broken links    |
+  | `a11y.spec.ts`         | Accessibility scans, keyboard-only use, reduced motion         |
+
+- **Import `test` and `expect` from `./fixtures`**, not `@playwright/test`. The fixture fails any
+  test where the app opens a native pop-up.
+- **Shared steps live in `e2e/helpers.ts`**: `draw()`, `storedLinks()`, `decodeLink()`,
+  `giftPath()` and `expectNoA11yViolations()`. Use `giftPath()` to test the reveal with a known
+  recipient, and `decodeLink()` to check what a real draw produced.
+- **Fake the browser, not the app.** To test sharing or blocked copying, replace
+  `navigator.share` or `navigator.clipboard` with `page.addInitScript`. Never stub the app's own
+  code.
+- **A test must be able to fail.** For a new rule, break the code on purpose once and check the
+  test goes red. Watch out for tests about something _not_ happening: they can pass before the
+  thing has had time to happen.
 - **No fixed waits** (`waitForTimeout`) in Playwright tests. Wait for something visible, or let
   `expectNoA11yViolations` wait for animations to finish.
 

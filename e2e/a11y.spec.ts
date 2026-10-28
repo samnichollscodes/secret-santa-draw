@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures'
 import { addNames, drawAndGetLink, expectNoA11yViolations } from './helpers'
 
 const NAMES = ['Ann', 'Ben', 'Cat']

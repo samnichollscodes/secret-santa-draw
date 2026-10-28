@@ -27,7 +27,13 @@ export default function App() {
       <Snow />
       <main className="page">
         <Header small={route.page === 'gift'} />
-        {route.page === 'gift' ? <Reveal token={route.token} /> : <Organiser />}
+        {route.page === 'gift' ? (
+          // Keyed by token so each link starts wrapped, even when opened in a
+          // tab that already unwrapped a different one.
+          <Reveal key={route.token} token={route.token} />
+        ) : (
+          <Organiser />
+        )}
       </main>
       <footer className="footer">Made with mince pies &amp; mulled wine 🍷</footer>
     </>

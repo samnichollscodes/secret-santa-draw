@@ -132,7 +132,7 @@ src/
     households.ts       Reading names and households from what was typed
     storage.ts          Saving the organiser's draw in the browser
     *.test.ts           Unit tests
-e2e/                    Playwright tests and the accessibility scan helper
+e2e/                    Playwright tests (one spec per area), fixtures and helpers
 wrangler.jsonc          Cloudflare deployment config
 biome.jsonc             Lint and formatting rules
 ```

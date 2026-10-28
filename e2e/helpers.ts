@@ -1,5 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, type Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
+import { type Assignment, decodeAssignment, encodeAssignment } from '../src/lib/draw'
+import { expect } from './fixtures'
 
 // WCAG 2.2 A and AA, which is the level the app aims for.
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
@@ -53,22 +55,54 @@ export async function expectNoA11yViolations(page: Page): Promise<void> {
   expect(summary).toEqual([])
 }
 
-export async function addNames(page: Page, names: string[]): Promise<void> {
-  await page.getByRole('textbox', { name: 'Name' }).fill(names.join(', '))
+// Types into the name box and presses Add. Each entry is one household, so
+// `['Sam + Alex', 'Jo']` adds a couple and a single.
+export async function addNames(page: Page, entries: string[]): Promise<void> {
+  await page.getByRole('textbox', { name: 'Name' }).fill(entries.join(', '))
   await page.getByRole('button', { name: 'Add' }).click()
 }
 
-// Runs a draw through the UI and returns the first person's gift link.
-export async function drawAndGetLink(page: Page, names: string[]): Promise<string> {
+// Starts from an empty organiser page, adds the names and runs the draw.
+export async function draw(page: Page, entries: string[], note = ''): Promise<void> {
   await page.goto('/')
-  await addNames(page, names)
+  await page.evaluate(() => localStorage.clear())
+  await page.reload()
+  await addNames(page, entries)
+  if (note) await page.getByRole('textbox', { name: /Message for everyone/ }).fill(note)
   await page.getByRole('button', { name: /Draw names/ }).click()
-  const url = await page.evaluate(() => {
-    const saved = JSON.parse(localStorage.getItem('nm-secret-santa') ?? '{}') as {
-      links?: { url: string }[]
-    }
-    return saved.links?.[0]?.url
-  })
-  if (!url) throw new Error('Draw did not produce any links')
-  return url
+  await expect(page.getByRole('heading', { name: /names are in the hat/ })).toBeVisible()
 }
+
+export type StoredLink = { giver: string; url: string; sent: boolean }
+
+// The links exactly as the organiser page saved them in the browser.
+export async function storedLinks(page: Page): Promise<StoredLink[]> {
+  return page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem('nm-secret-santa') ?? '{}') as {
+      links?: StoredLink[]
+    }
+    return saved.links ?? []
+  })
+}
+
+export function decodeLink(url: string): Assignment {
+  const assignment = decodeAssignment(url.split('#/gift/')[1] ?? '')
+  if (!assignment) throw new Error(`Undecodable link: ${url}`)
+  return assignment
+}
+
+// Runs a draw through the UI and returns the first person's gift link.
+export async function drawAndGetLink(page: Page, entries: string[]): Promise<string> {
+  await draw(page, entries)
+  const [first] = await storedLinks(page)
+  if (!first) throw new Error('Draw did not produce any links')
+  return first.url
+}
+
+// A gift link made directly, for testing the reveal with a known recipient.
+export function giftPath(assignment: Assignment): string {
+  return `/#/gift/${encodeAssignment(assignment)}`
+}
+
+export const sentCheckbox = (page: Page, name: string) =>
+  page.getByRole('checkbox', { name: `Sent to ${name}` })
