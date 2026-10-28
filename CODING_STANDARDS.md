@@ -40,7 +40,7 @@ components. There are no hand-written CSS classes.
   new design values there and use them as classes. Biome's `noTailwindRawColors` rule rejects
   Tailwind's stock palette (`bg-red-500`), so every colour comes from the theme.
 - **Prefer standard classes over arbitrary values.** Write `right-4.5`, not `right-[18px]`.
-  `npm run lint` reports any arbitrary value that has a standard form, and `npm run lint:fix`
+  `bun run lint` reports any arbitrary value that has a standard form, and `bun run lint:fix`
   converts it. Arbitrary values are fine for one-off values with no standard form, like
   `text-[clamp(2rem,9vw,2.8rem)]`.
 - **Reuse with components, not CSS.** Repeated looks are React components (`ui/Card.tsx`,
@@ -59,7 +59,7 @@ components. There are no hand-written CSS classes.
 
 [Biome](https://biomejs.dev) lints and formats the project. Its config is `biome.jsonc`.
 
-- **Formatting is Biome's job.** Run `npm run format` (or `npm run lint:fix`) rather than tidying
+- **Formatting is Biome's job.** Run `bun run format` (or `bun run lint:fix`) rather than tidying
   by hand. The style is 2-space indent, single quotes, no semicolons, trailing commas and 100
   character lines.
 - **Linting** uses Biome's recommended rules, plus extra code-smell checks: overly complex
@@ -75,9 +75,9 @@ components. There are no hand-written CSS classes.
   shorthands (`w-4 h-4` → `size-4`), no legacy names, and theme colours only. Biome doesn't know
   about canonical forms, so `scripts/check-tailwind.ts` covers those (`right-[18px]` →
   `right-4.5`). It uses Tailwind's own converter, so it gives the same suggestions as the
-  Tailwind CSS IntelliSense editor extension. Both run in `npm run lint`, and `npm run lint:fix`
+  Tailwind CSS IntelliSense editor extension. Both run in `bun run lint`, and `bun run lint:fix`
   applies their fixes.
-- oxlint also runs as part of `npm run lint`, alongside Biome.
+- oxlint also runs as part of `bun run lint`, alongside Biome.
 
 ## Copy
 
@@ -91,7 +91,7 @@ The organiser must never see who drew whom. Nothing on the organiser screen (UI,
 
 ## Accessibility
 
-The app aims for **WCAG 2.2 AA**. `npm run test:e2e` checks it with Playwright and axe-core in
+The app aims for **WCAG 2.2 AA**. `bun run test:e2e` checks it with Playwright and axe-core in
 `e2e/`, on desktop and mobile.
 
 - **Every screen and state gets a scan.** That covers the organiser form, its error state, the draw
@@ -116,11 +116,12 @@ flow with VoiceOver (Cmd+F5) and at 200% zoom.
 
 ## Testing
 
-- **Unit tests (Vitest)** live next to the code as `src/**/*.test.ts` and run with `npm test`.
+- **Unit tests (Vitest)** live next to the code as `src/**/*.test.ts` and run with `bun run test`.
+  (A plain `bun test` runs them with Bun's own runner instead; `bunfig.toml` keeps it to `src/`.)
   Anything in `src/lib/` gets tests, especially the draw: its tests run each household setup
   hundreds of times and check every rule (nobody draws themselves or their own household, everyone
   gives and receives once, one single loop). Add a case there for any new draw rule.
-- **End-to-end tests (Playwright)** live in `e2e/` and run with `npm run test:e2e`. They drive the
+- **End-to-end tests (Playwright)** live in `e2e/` and run with `bun run test:e2e`. They drive the
   real app on desktop and mobile. There's one spec file per area:
 
   | File                   | Covers                                                         |
@@ -147,16 +148,16 @@ flow with VoiceOver (Cmd+F5) and at 200% zoom.
 
 ## Before committing
 
-Run all five and make sure they pass. `npm run lint:fix` fixes most lint and formatting issues
+Run all five and make sure they pass. `bun run lint:fix` fixes most lint and formatting issues
 for you.
 
 ```bash
-npm run typecheck
-npm run lint
-npm test
-npm run build
-npm run test:e2e
+bun run typecheck
+bun run lint
+bun run test
+bun run build
+bun run test:e2e
 ```
 
 The first time you run the end-to-end tests, install the browser with
-`npx playwright install chromium`.
+`bunx playwright install chromium`.

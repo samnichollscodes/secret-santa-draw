@@ -4,8 +4,8 @@
 // `suggestCanonicalClasses`, using Tailwind's own converter, so the command
 // line agrees with the editor.
 //
-//   node scripts/check-tailwind.ts         report problems, exit 1 if any
-//   node scripts/check-tailwind.ts --fix   rewrite them in place
+//   bun scripts/check-tailwind.ts         report problems, exit 1 if any
+//   bun scripts/check-tailwind.ts --fix   rewrite them in place
 //
 // Merging classes (`w-4 h-4` → `size-4`) and ordering them are left to Biome's
 // useTailwindShorthandClasses and useTailwindSortedClasses rules.
@@ -94,7 +94,7 @@ if (total === 0) {
   console.log(`Fixed ${total} Tailwind class${total === 1 ? '' : 'es'}.`)
 } else {
   console.log(
-    `\n${total} Tailwind class${total === 1 ? '' : 'es'} can be written more simply. Run npm run lint:fix to fix.`,
+    `\n${total} Tailwind class${total === 1 ? '' : 'es'} can be written more simply. Run bun run lint:fix to fix.`,
   )
   process.exitCode = 1
 }

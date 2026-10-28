@@ -55,6 +55,7 @@ to cheat. Keeping it truly secret would need a server to hold the results.
 | Area                               | Tools                                                                                                                                                           |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | App                                | [React 19](https://react.dev) and [TypeScript 7](https://www.typescriptlang.org) in strict mode                                                                 |
+| Runtime and package manager        | [Bun 1.3](https://bun.com), running Vite, Vitest, Playwright and the scripts                                                                                    |
 | Build and dev server               | [Vite 8](https://vite.dev)                                                                                                                                      |
 | Styling                            | [Tailwind CSS 4](https://tailwindcss.com), with the theme in `src/index.css`. Fonts from Google Fonts (Playfair Display, Great Vibes, Lato)                     |
 | Linting and formatting             | [Biome 2](https://biomejs.dev) (including its Tailwind rules), [oxlint](https://oxc.rs), and a Tailwind canonical-class check                                   |
@@ -66,8 +67,8 @@ to cheat. Keeping it truly secret would need a server to hold the results.
 
 ### What you need
 
-- [Node.js](https://nodejs.org) **22.12 or newer** (Vite needs at least 20.19 or 22.12)
-- npm, which comes with Node.js
+- [Bun](https://bun.com) **1.3 or newer**. It installs the dependencies and runs everything:
+  the dev server, build, tests and scripts. Node.js isn't needed.
 - Git
 
 ### First-time setup
@@ -82,19 +83,19 @@ to cheat. Keeping it truly secret would need a server to hold the results.
 2. Install the dependencies:
 
    ```bash
-   npm install
+   bun install
    ```
 
 3. Install the browser the end-to-end tests use (only needed once per machine):
 
    ```bash
-   npx playwright install chromium
+   bunx playwright install chromium
    ```
 
 4. Start the dev server:
 
    ```bash
-   npm run dev
+   bun run dev
    ```
 
    Open http://localhost:5173. Changes appear in the browser as you save.
@@ -103,15 +104,17 @@ to cheat. Keeping it truly secret would need a server to hold the results.
 
 | Command             | What it does                                                                                                                    |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`       | Starts the dev server with hot reload                                                                                           |
-| `npm run build`     | Type-checks, then builds the site into `dist/`                                                                                  |
-| `npm run preview`   | Serves the built `dist/` folder locally                                                                                         |
-| `npm run typecheck` | Type-checks the app, config and tests                                                                                           |
-| `npm run lint`      | Runs Biome (lint, formatting and Tailwind rules), oxlint, then the Tailwind canonical-class check                               |
-| `npm run lint:fix`  | Fixes most lint, formatting and Tailwind class problems automatically                                                           |
-| `npm run format`    | Formats the code with Biome                                                                                                     |
-| `npm test`          | Runs the Vitest unit tests                                                                                                      |
-| `npm run test:e2e`  | Runs the Playwright tests (user flows and accessibility scans) on desktop and mobile. It starts its own dev server on port 5174 |
+| `bun run dev`       | Starts the dev server with hot reload                                                                                           |
+| `bun run build`     | Type-checks, then builds the site into `dist/`                                                                                  |
+| `bun run preview`   | Serves the built `dist/` folder locally                                                                                         |
+| `bun run typecheck` | Type-checks the app, config and tests                                                                                           |
+| `bun run lint`      | Runs Biome (lint, formatting and Tailwind rules), oxlint, then the Tailwind canonical-class check                               |
+| `bun run lint:fix`  | Fixes most lint, formatting and Tailwind class problems automatically                                                           |
+| `bun run format`    | Formats the code with Biome                                                                                                     |
+| `bun run test`      | Runs the Vitest unit tests                                                                                                      |
+| `bun run test:e2e`  | Runs the Playwright tests (user flows and accessibility scans) on desktop and mobile. It starts its own dev server on port 5174 |
+
+Use `bun run test` for the unit tests. A plain `bun test` also works: [bunfig.toml](bunfig.toml) points Bun's own test runner at the same unit tests in `src/`.
 
 ## Project structure
 
@@ -135,7 +138,7 @@ src/
     *.test.ts           Unit tests
 e2e/                    Playwright tests (one spec per area), fixtures and helpers
 scripts/
-  check-tailwind.ts     Flags Tailwind classes with a standard form (part of npm run lint)
+  check-tailwind.ts     Flags Tailwind classes with a standard form (part of bun run lint)
 wrangler.jsonc          Cloudflare deployment config
 biome.jsonc             Lint and formatting rules
 ```
@@ -146,21 +149,22 @@ never sent to the server, so any static host works without extra setup.
 ## Deploying
 
 The site is hosted on Cloudflare Workers as static files. Cloudflare's Git integration builds and
-deploys `main` automatically on each push, using `npm run build` and then `npx wrangler deploy`.
+deploys `main` automatically on each push, using `bun run build` and then `bunx wrangler deploy`.
+Cloudflare installs the dependencies with Bun because the repository has a `bun.lock`.
 [wrangler.jsonc](wrangler.jsonc) tells Cloudflare to serve the `dist/` folder at
 `secret-santa-draw.samnicholls.dev`.
 
 To deploy from your own machine instead:
 
 ```bash
-npm run build
-npx wrangler deploy
+bun run build
+bunx wrangler deploy
 ```
 
 Wrangler asks you to log in to Cloudflare the first time.
 
 **Using your own domain:** change the `routes` pattern in `wrangler.jsonc` to a domain on your
-Cloudflare account, or remove `routes` to use the free `*.workers.dev` address. `npm run build`
+Cloudflare account, or remove `routes` to use the free `*.workers.dev` address. `bun run build`
 outputs a plain static site, so `dist/` can also be hosted anywhere else, such as GitHub Pages,
 Netlify or Vercel.
 
@@ -173,11 +177,11 @@ see who drew whom.
 Before committing, run these and make sure they all pass:
 
 ```bash
-npm run typecheck
-npm run lint
-npm test
-npm run build
-npm run test:e2e
+bun run typecheck
+bun run lint
+bun run test
+bun run build
+bun run test:e2e
 ```
 
-`npm run lint:fix` fixes most lint and formatting problems for you.
+`bun run lint:fix` fixes most lint and formatting problems for you.

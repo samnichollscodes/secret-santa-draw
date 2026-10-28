@@ -74,7 +74,7 @@
         // Tailwind: keep classes in Tailwind's order, merge pairs that have a
         // shorthand (w-4 h-4 → size-4), use the old names' replacements, and
         // only use theme colours. Their fixes are marked safe so
-        // npm run lint:fix applies them. scripts/check-tailwind.ts covers
+        // bun run lint:fix applies them. scripts/check-tailwind.ts covers
         // canonical forms (right-[18px] → right-4.5), which Biome doesn't.
         "useTailwindSortedClasses": { "level": "error", "fix": "safe" },
         "useTailwindShorthandClasses": { "level": "error", "fix": "safe" },
