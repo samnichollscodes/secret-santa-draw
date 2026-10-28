@@ -1,6 +1,9 @@
 import { type SubmitEvent, useId, useState } from 'react'
 import { findDrawProblem, type Household } from '../lib/draw'
 import { findDuplicate, parseHouseholds, removePerson } from '../lib/households'
+import Button from './ui/Button'
+import Card from './ui/Card'
+import { cardTitle, fieldLabel, hint, input as inputClasses, muted } from './ui/classes'
 
 type NameEntryProps = {
   households: Household[]
@@ -38,33 +41,31 @@ export default function NameEntry({
   }
 
   return (
-    <section className="card">
-      <h2>Who's in the draw?</h2>
-      <p className="muted">
+    <Card>
+      <h2 className={cardTitle}>Who's in the draw?</h2>
+      <p className={muted}>
         Add everyone taking part. You'll get a private link for each person — and even you won't
         know who's got who.
       </p>
 
-      <form className="row" onSubmit={addNames}>
+      <form className="flex gap-2.5 max-[480px]:flex-col" onSubmit={addNames}>
         <input
-          className="input"
+          className={inputClasses}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="e.g. Sam + Alex, Jo"
           aria-label="Name"
           aria-describedby={hintId}
         />
-        <button className="btn" type="submit">
-          Add
-        </button>
+        <Button type="submit">Add</Button>
       </form>
-      <p id={hintId} className="hint">
+      <p id={hintId} className={hint}>
         Separate people with commas. Join people with <strong>+</strong> if they shouldn't draw each
         other, like couples or housemates.
       </p>
 
       {total > 0 ? (
-        <ul className="chips">
+        <ul className="mt-4.5 flex flex-wrap gap-2">
           {households.map((household) => (
             <HouseholdChips
               key={household.join('+')}
@@ -74,13 +75,13 @@ export default function NameEntry({
           ))}
         </ul>
       ) : (
-        <p className="empty">No elves on the list yet…</p>
+        <p className="mt-4.5 text-ink-soft italic">No elves on the list yet…</p>
       )}
 
-      <label className="field">
-        <span>Message for everyone (optional)</span>
+      <label className="mt-5.5 mb-4.5 block">
+        <span className={fieldLabel}>Message for everyone (optional)</span>
         <input
-          className="input"
+          className={inputClasses}
           value={note}
           onChange={(e) => onNoteChange(e.target.value)}
           placeholder="e.g. £25 limit — presents on Christmas Eve!"
@@ -88,17 +89,17 @@ export default function NameEntry({
         />
       </label>
 
-      {error && <p className="error">{error}</p>}
+      {error && <p className="mb-3.5 font-bold text-berry">{error}</p>}
 
-      <button type="button" className="btn btn--big" onClick={onDraw} disabled={problem !== null}>
+      <Button size="large" onClick={onDraw} disabled={problem !== null}>
         Draw names ✨
-      </button>
+      </Button>
       {total > 0 && problem && (
-        <p className="muted center draw-hint" aria-live="polite">
+        <p className="mt-3.5 text-center leading-normal text-ink-soft" aria-live="polite">
           {problem}
         </p>
       )}
-    </section>
+    </Card>
   )
 }
 
@@ -109,11 +110,14 @@ type HouseholdChipsProps = {
 
 function HouseholdChips({ household, onRemove }: HouseholdChipsProps) {
   const chips = household.map((name) => (
-    <span key={name} className="chip">
+    <span
+      key={name}
+      className="inline-flex animate-pop items-center gap-1.5 rounded-full bg-pine-700 py-1.75 pr-2 pl-3.5 font-bold text-cream"
+    >
       {name}
       <button
         type="button"
-        className="chip__x"
+        className="size-[22px] cursor-pointer rounded-full bg-white/15 p-0 leading-none text-inherit hover:bg-berry"
         onClick={() => onRemove(name)}
         aria-label={`Remove ${name}`}
       >
@@ -122,10 +126,14 @@ function HouseholdChips({ household, onRemove }: HouseholdChipsProps) {
     </span>
   ))
 
-  if (household.length === 1) return <li className="chips__item">{chips}</li>
+  if (household.length === 1) return <li className="flex">{chips}</li>
 
   return (
-    <li className="chips__item household">
+    // People who won't draw each other, wrapped together in one dashed pill.
+    <li
+      data-testid="household"
+      className="flex gap-1 rounded-full border-2 border-dashed border-pine-500 p-0.75"
+    >
       <span className="sr-only">Household, won't draw each other: </span>
       {chips}
     </li>

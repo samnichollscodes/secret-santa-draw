@@ -4,8 +4,10 @@ import { draw, expectNoA11yViolations, sentCheckbox, storedLinks } from './helpe
 
 const NAMES = ['Ann', 'Ben', 'Cat']
 
+const rows = (page: Page) => page.getByRole('list', { name: 'Gift links' }).getByRole('listitem')
+
 const row = (page: Page, name: string) =>
-  page.locator('.links__row').filter({ has: page.getByText(name, { exact: true }) })
+  rows(page).filter({ has: page.getByText(name, { exact: true }) })
 
 async function clipboardText(page: Page): Promise<string> {
   return page.evaluate(() => navigator.clipboard.readText())
@@ -174,7 +176,7 @@ test.describe('sent tracking', () => {
     const before = await storedLinks(page)
     await page.reload()
     expect(await storedLinks(page)).toEqual(before)
-    await expect(page.locator('.links__row')).toHaveCount(3)
+    await expect(rows(page)).toHaveCount(3)
   })
 })
 
@@ -193,7 +195,7 @@ test.describe('starting over', () => {
 
     await dialog.getByRole('button', { name: 'Keep these links' }).click()
     await expect(dialog).toBeHidden()
-    await expect(page.locator('.links__row')).toHaveCount(3)
+    await expect(rows(page)).toHaveCount(3)
   })
 
   test('Escape closes the dialog and returns focus', async ({ page }) => {

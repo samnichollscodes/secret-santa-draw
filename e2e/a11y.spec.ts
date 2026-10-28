@@ -70,7 +70,7 @@ test.describe('gift link', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     const url = await drawAndGetLink(page, NAMES)
     await page.goto(url)
-    await expect(page.locator('.snow')).toBeHidden()
+    await expect(page.getByTestId('snow')).toBeHidden()
     await page.getByRole('button', { name: 'Unwrap your present' }).click()
     await expect(page.getByText("You're buying for")).toBeVisible()
     await expectNoA11yViolations(page)

@@ -25,7 +25,7 @@ export default function App() {
   return (
     <>
       <Snow />
-      <main className="page">
+      <main className="relative z-1 mx-auto max-w-160 px-4 pt-8 pb-6">
         <Header small={route.page === 'gift'} />
         {route.page === 'gift' ? (
           // Keyed by token so each link starts wrapped, even when opened in a
@@ -35,7 +35,9 @@ export default function App() {
           <Organiser />
         )}
       </main>
-      <footer className="footer">Made with mince pies &amp; mulled wine 🍷</footer>
+      <footer className="relative z-1 px-4 pt-4 pb-8 text-center text-[0.85rem] text-cream/75">
+        Made with mince pies &amp; mulled wine 🍷
+      </footer>
     </>
   )
 }

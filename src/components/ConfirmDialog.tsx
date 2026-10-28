@@ -1,4 +1,7 @@
 import { type ReactNode, useEffect, useId, useRef } from 'react'
+import Button from './ui/Button'
+import { buttonRow, cardTitle } from './ui/classes'
+import { cn } from './ui/cn'
 
 type ConfirmDialogProps = {
   open: boolean
@@ -42,7 +45,7 @@ export default function ConfirmDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="dialog"
+      className="m-auto w-[min(440px,calc(100vw-32px))] rounded-[18px] bg-cream p-6 text-ink scheme-light shadow-dialog backdrop:bg-[rgb(5_18_13/0.7)]"
       aria-labelledby={titleId}
       aria-describedby={bodyId}
       // Escape key: treat it as cancelling.
@@ -51,19 +54,17 @@ export default function ConfirmDialog({
         onCancel()
       }}
     >
-      <h2 id={titleId} className="dialog__title">
+      <h2 id={titleId} className={cardTitle}>
         {title}
       </h2>
-      <div id={bodyId} className="dialog__body">
+      <div id={bodyId} className="[&_p]:mb-3 [&_p]:leading-normal">
         {children}
       </div>
-      <div className="row row--end">
-        <button ref={cancelRef} type="button" className="btn btn--ghost" onClick={onCancel}>
+      <div className={cn(buttonRow, 'mt-2')}>
+        <Button ref={cancelRef} variant="ghost" onClick={onCancel}>
           {cancelLabel}
-        </button>
-        <button type="button" className="btn" onClick={onConfirm}>
-          {confirmLabel}
-        </button>
+        </Button>
+        <Button onClick={onConfirm}>{confirmLabel}</Button>
       </div>
     </dialog>
   )

@@ -49,7 +49,9 @@ test('links are listed in the order names were entered, never the draw order', a
   // the game away. Check several draws in case one happens to match.
   for (let run = 0; run < 5; run++) {
     await draw(page, SINGLES)
-    await expect(page.locator('.links__name strong')).toHaveText(SINGLES)
+    await expect(
+      page.getByRole('list', { name: 'Gift links' }).getByRole('listitem').locator('strong'),
+    ).toHaveText(SINGLES)
   }
 })
 

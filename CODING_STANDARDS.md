@@ -32,9 +32,28 @@ This project is written in **TypeScript**. All source code goes in `.ts` / `.tsx
 
 ## Styling
 
-- Plain CSS in `src/index.css`, with BEM-style class names (`gift__lid`, `btn--ghost`).
-- Colours and fonts come from the custom properties on `:root`. Don't hard-code new colours inline.
-- Respect `prefers-reduced-motion` for any new animation.
+The app is styled with [Tailwind CSS 4](https://tailwindcss.com) utility classes in the
+components. There are no hand-written CSS classes.
+
+- **The theme lives in `src/index.css`**, in `@theme`: colours (`pine-700`, `berry`, `cream`…),
+  fonts (`font-display`, `font-script`, `font-body`), shadows and animations (`animate-rise`…). Add
+  new design values there and use them as classes. Biome's `noTailwindRawColors` rule rejects
+  Tailwind's stock palette (`bg-red-500`), so every colour comes from the theme.
+- **Prefer standard classes over arbitrary values.** Write `right-4.5`, not `right-[18px]`.
+  `npm run lint` reports any arbitrary value that has a standard form, and `npm run lint:fix`
+  converts it. Arbitrary values are fine for one-off values with no standard form, like
+  `text-[clamp(2rem,9vw,2.8rem)]`.
+- **Reuse with components, not CSS.** Repeated looks are React components (`ui/Card.tsx`,
+  `ui/Button.tsx`) or shared class lists (`ui/classes.ts`). Use `@utility` in `index.css` only
+  for things too detailed for classes, like the gift's wrapping paper.
+- **Join class lists with `cn()`** (`ui/cn.ts`), not template strings, and wrap shared class
+  constants in it. Biome's Tailwind rules only check strings in `className` and in `cn()`.
+- **Drive state with data attributes and `group-data-*`.** The present uses
+  `data-stage="idle|shaking|open"` on a `group`, and its parts react with classes like
+  `group-data-[stage=open]:animate-lid-off`.
+- **Tests never select by CSS class.** Use roles, labels, `data-testid` or data attributes, so
+  changing the styling can't break them.
+- Respect `prefers-reduced-motion` for any new animation (`motion-reduce:`).
 
 ## Linting and formatting: Biome
 
@@ -52,6 +71,12 @@ This project is written in **TypeScript**. All source code goes in `.ts` / `.tsx
   hint, so this rule is what enforces it.
 - **Don't switch rules off to get a clean run.** If a rule really doesn't fit one spot, add a
   `// biome-ignore <rule>: <reason>` comment on that line, with a real reason.
+- **Tailwind classes** are checked by Biome's Tailwind rules: Tailwind's class order,
+  shorthands (`w-4 h-4` → `size-4`), no legacy names, and theme colours only. Biome doesn't know
+  about canonical forms, so `scripts/check-tailwind.ts` covers those (`right-[18px]` →
+  `right-4.5`). It uses Tailwind's own converter, so it gives the same suggestions as the
+  Tailwind CSS IntelliSense editor extension. Both run in `npm run lint`, and `npm run lint:fix`
+  applies their fixes.
 - oxlint also runs as part of `npm run lint`, alongside Biome.
 
 ## Copy
@@ -81,8 +106,9 @@ The app aims for **WCAG 2.2 AA**. `npm run test:e2e` checks it with Playwright a
 - **Keep text on solid colours.** axe can't measure contrast over gradients or background images,
   and it quietly skips those checks. Put depth on buttons and cards with shadows instead.
 - **Decorations stay out of the way.** Mark them `aria-hidden`, and keep them from overlapping
-  text. The scan helper hides the snow, the confetti and the card stripe, and scans against the
-  lightest part of the page gradient. Don't widen that list to make a failing check pass.
+  text. The scan helper hides anything marked `data-decorative` (the snow, the confetti and the
+  card stripe), and scans against the lightest part of the page gradient. Don't mark something
+  decorative to make a failing check pass.
 - Respect `prefers-reduced-motion`, as covered under Styling.
 
 Automated checks catch roughly a third of accessibility problems. Before a release, also try the

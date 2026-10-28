@@ -87,7 +87,7 @@ test.describe('when the draw is ready', () => {
 test.describe('households', () => {
   test('joins people with + or & into one household', async ({ page }) => {
     await addNames(page, ['Sam + Alex', 'Jo & Chris & Pat', 'Lee'])
-    const households = page.locator('.household')
+    const households = page.getByTestId('household')
     await expect(households).toHaveCount(2)
     await expect(households.nth(0)).toContainText('Sam')
     await expect(households.nth(0)).toContainText('Alex')
@@ -120,7 +120,7 @@ test.describe('households', () => {
     await expect(removeButton(page, 'Sam')).toBeVisible()
     await expect(removeButton(page, 'Alex')).toHaveCount(0)
     // Sam is now on their own, so no household group is left.
-    await expect(page.locator('.household')).toHaveCount(0)
+    await expect(page.getByTestId('household')).toHaveCount(0)
   })
 })
 
@@ -131,7 +131,7 @@ test.describe('saving', () => {
     await page.reload()
 
     await expect(removeButton(page, 'Alex')).toBeVisible()
-    await expect(page.locator('.household')).toHaveCount(1)
+    await expect(page.getByTestId('household')).toHaveCount(1)
     await expect(page.getByRole('textbox', { name: /Message for everyone/ })).toHaveValue(
       '£25 limit',
     )

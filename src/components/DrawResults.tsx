@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { formatNames } from '../lib/draw'
 import type { GiftLink } from '../lib/storage'
 import ConfirmDialog from './ConfirmDialog'
+import Button from './ui/Button'
+import Card from './ui/Card'
+import { buttonRow, cardTitle, fieldLabel, hint, input, muted } from './ui/classes'
+import { cn } from './ui/cn'
 
 type DrawResultsProps = {
   links: GiftLink[]
@@ -79,36 +83,37 @@ export default function DrawResults({ links, onLinksChange, onStartOver }: DrawR
   const allText = links.map((l) => `${l.giver}: ${l.url}`).join('\n')
 
   return (
-    <section className="card">
-      <h2>The names are in the hat! 🎩</h2>
-      <p className="muted">
+    <Card>
+      <h2 className={cardTitle}>The names are in the hat! 🎩</h2>
+      <p className={muted}>
         Send each person their own link. Don't open them yourself — the link reveals who that person
         drew, so it would spoil the surprise.
       </p>
-      <p className="sent-progress" aria-live="polite">
+      <p className="mb-1 font-bold text-pine-700" aria-live="polite">
         {sentCount === links.length
           ? 'All links sent! 🎉'
           : `${sentCount} of ${links.length} links sent`}
       </p>
-      <ul className="links">
+      <ul aria-label="Gift links">
         {links.map((link) => (
-          <li key={link.giver} className={`links__row ${link.sent ? 'links__row--sent' : ''}`}>
-            <span className="links__name">
-              <span className="tag" aria-hidden="true">
-                🎁
-              </span>{' '}
-              For <strong>{link.giver}</strong>
+          <li
+            key={link.giver}
+            className="flex flex-wrap items-center justify-between gap-2.5 border-b border-dashed border-rule py-3"
+          >
+            <span className={cn('text-[1.05rem]', link.sent && 'text-ink-soft')}>
+              <span aria-hidden="true">🎁</span> For <strong>{link.giver}</strong>
             </span>
-            <span className="links__actions">
-              <button type="button" className="btn btn--ghost" onClick={() => copyLink(link)}>
+            <span className="flex items-center gap-2">
+              <Button variant="ghost" onClick={() => copyLink(link)}>
                 {copied === link.giver ? 'Copied!' : 'Copy link'}
-              </button>
-              <button type="button" className="btn btn--small" onClick={() => share(link)}>
+              </Button>
+              <Button size="small" onClick={() => share(link)}>
                 Share
-              </button>
-              <label className="sent">
+              </Button>
+              <label className="ml-1 inline-flex cursor-pointer items-center gap-1.5 text-[0.9rem] font-bold text-ink-soft">
                 <input
                   type="checkbox"
+                  className="m-0 size-4.5 cursor-pointer accent-pine-500"
                   checked={link.sent}
                   onChange={(e) => setSent(link.giver, e.target.checked)}
                 />
@@ -120,38 +125,36 @@ export default function DrawResults({ links, onLinksChange, onStartOver }: DrawR
       </ul>
 
       {manualCopy && (
-        <div className="manual-copy">
-          <label className="field">
-            <span>This browser blocked copying. Here's {manualCopy.label} to copy yourself:</span>
+        <div className="mt-4 rounded-xl border-2 border-dashed border-gold px-3.5 pt-1 pb-3.5">
+          <label className="mt-3 block">
+            <span className={fieldLabel}>
+              This browser blocked copying. Here's {manualCopy.label} to copy yourself:
+            </span>
             <textarea
               ref={manualCopyRef}
-              className="input manual-copy__text"
+              className={cn(input, 'resize-y text-[0.85rem] break-all')}
               value={manualCopy.text}
               readOnly
               rows={3}
               onFocus={(e) => e.target.select()}
             />
           </label>
-          <p className="hint">Tick "Sent" once you've sent it.</p>
-          <div className="row row--end">
-            <button type="button" className="btn btn--ghost" onClick={() => setManualCopy(null)}>
+          <p className={hint}>Tick "Sent" once you've sent it.</p>
+          <div className={cn(buttonRow, 'mt-2')}>
+            <Button variant="ghost" onClick={() => setManualCopy(null)}>
               Done
-            </button>
+            </Button>
           </div>
         </div>
       )}
 
-      <div className="row row--end">
-        <button
-          type="button"
-          className="btn btn--ghost"
-          onClick={() => copy(allText, ALL, 'every link')}
-        >
+      <div className={cn(buttonRow, 'mt-4.5')}>
+        <Button variant="ghost" onClick={() => copy(allText, ALL, 'every link')}>
           {copied === ALL ? 'Copied all!' : 'Copy all links'}
-        </button>
-        <button type="button" className="btn btn--ghost" onClick={() => setConfirming(true)}>
+        </Button>
+        <Button variant="ghost" onClick={() => setConfirming(true)}>
           Start over
-        </button>
+        </Button>
       </div>
 
       <ConfirmDialog
@@ -179,6 +182,6 @@ export default function DrawResults({ links, onLinksChange, onStartOver }: DrawR
           </>
         )}
       </ConfirmDialog>
-    </section>
+    </Card>
   )
 }

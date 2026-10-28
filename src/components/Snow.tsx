@@ -21,11 +21,16 @@ export default function Snow({ count = 60 }: SnowProps) {
   const [flakes] = useState(() => makeFlakes(count))
 
   return (
-    <div className="snow" aria-hidden="true">
+    <div
+      aria-hidden="true"
+      data-decorative
+      data-testid="snow"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden motion-reduce:hidden"
+    >
       {flakes.map((f) => (
         <span
           key={f.id}
-          className="flake"
+          className="absolute -top-2.5 animate-snowfall rounded-full bg-white blur-[0.5px]"
           style={{
             left: `${f.left}%`,
             width: f.size,

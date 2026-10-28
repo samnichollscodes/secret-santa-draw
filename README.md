@@ -56,8 +56,8 @@ to cheat. Keeping it truly secret would need a server to hold the results.
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | App                                | [React 19](https://react.dev) and [TypeScript 7](https://www.typescriptlang.org) in strict mode                                                                 |
 | Build and dev server               | [Vite 8](https://vite.dev)                                                                                                                                      |
-| Styling                            | Plain CSS with custom properties. Fonts from Google Fonts (Playfair Display, Great Vibes, Lato)                                                                 |
-| Linting and formatting             | [Biome 2](https://biomejs.dev), plus [oxlint](https://oxc.rs)                                                                                                   |
+| Styling                            | [Tailwind CSS 4](https://tailwindcss.com), with the theme in `src/index.css`. Fonts from Google Fonts (Playfair Display, Great Vibes, Lato)                     |
+| Linting and formatting             | [Biome 2](https://biomejs.dev) (including its Tailwind rules), [oxlint](https://oxc.rs), and a Tailwind canonical-class check                                   |
 | Unit tests                         | [Vitest 5](https://vitest.dev)                                                                                                                                  |
 | End-to-end and accessibility tests | [Playwright](https://playwright.dev) and [axe-core](https://github.com/dequelabs/axe-core), checking WCAG 2.2 AA on desktop and mobile                          |
 | Hosting                            | [Cloudflare Workers](https://developers.cloudflare.com/workers/) (static assets), deployed with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) |
@@ -107,8 +107,8 @@ to cheat. Keeping it truly secret would need a server to hold the results.
 | `npm run build`     | Type-checks, then builds the site into `dist/`                                                                                  |
 | `npm run preview`   | Serves the built `dist/` folder locally                                                                                         |
 | `npm run typecheck` | Type-checks the app, config and tests                                                                                           |
-| `npm run lint`      | Runs Biome (lint and formatting check), then oxlint                                                                             |
-| `npm run lint:fix`  | Fixes most lint and formatting problems automatically                                                                           |
+| `npm run lint`      | Runs Biome (lint, formatting and Tailwind rules), oxlint, then the Tailwind canonical-class check                               |
+| `npm run lint:fix`  | Fixes most lint, formatting and Tailwind class problems automatically                                                           |
 | `npm run format`    | Formats the code with Biome                                                                                                     |
 | `npm test`          | Runs the Vitest unit tests                                                                                                      |
 | `npm run test:e2e`  | Runs the Playwright tests (user flows and accessibility scans) on desktop and mobile. It starts its own dev server on port 5174 |
@@ -119,7 +119,7 @@ to cheat. Keeping it truly secret would need a server to hold the results.
 src/
   main.tsx              Entry point
   App.tsx               Picks the page from the URL: organiser or gift link
-  index.css             All styles and theme colours
+  index.css             Tailwind theme: colours, fonts, shadows, animations
   components/
     Organiser.tsx       Organiser page: holds the draw and saves it
     NameEntry.tsx       Adding names and households, then drawing
@@ -127,12 +127,15 @@ src/
     ConfirmDialog.tsx   On-page confirmation dialog
     Reveal.tsx          The gift link page and present animation
     Header.tsx, Snow.tsx
+    ui/                 Card, Button, cn() and shared class lists
   lib/
     draw.ts             The draw, and encoding results into links
     households.ts       Reading names and households from what was typed
     storage.ts          Saving the organiser's draw in the browser
     *.test.ts           Unit tests
 e2e/                    Playwright tests (one spec per area), fixtures and helpers
+scripts/
+  check-tailwind.ts     Flags Tailwind classes with a standard form (part of npm run lint)
 wrangler.jsonc          Cloudflare deployment config
 biome.jsonc             Lint and formatting rules
 ```

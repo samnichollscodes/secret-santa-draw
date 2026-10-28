@@ -25,9 +25,18 @@
     }
   },
   "css": {
+    // Understand Tailwind's @theme, @utility and @apply in src/index.css.
+    "parser": {
+      "tailwindDirectives": true
+    },
     "formatter": {
       "quoteStyle": "single"
     }
+  },
+  // Where Biome's Tailwind rules find the theme and the class strings to check.
+  "tailwind": {
+    "stylesheet": "./src/index.css",
+    "mergeFunctions": ["cn"]
   },
   "linter": {
     "enabled": true,
@@ -61,6 +70,17 @@
           "options": { "style": "type" }
         }
       },
+      "nursery": {
+        // Tailwind: keep classes in Tailwind's order, merge pairs that have a
+        // shorthand (w-4 h-4 → size-4), use the old names' replacements, and
+        // only use theme colours. Their fixes are marked safe so
+        // npm run lint:fix applies them. scripts/check-tailwind.ts covers
+        // canonical forms (right-[18px] → right-4.5), which Biome doesn't.
+        "useTailwindSortedClasses": { "level": "error", "fix": "safe" },
+        "useTailwindShorthandClasses": { "level": "error", "fix": "safe" },
+        "noTailwindLegacyUtilities": { "level": "error", "fix": "safe" },
+        "noTailwindRawColors": "error"
+      },
       "suspicious": {
         // Some in-app browsers silently cancel native pop-ups. Use ConfirmDialog.
         "noAlert": "error",
@@ -71,6 +91,13 @@
       }
     }
   },
+  "overrides": [
+    {
+      // Command-line scripts report by printing.
+      "includes": ["scripts/**"],
+      "linter": { "rules": { "suspicious": { "noConsole": "off" } } }
+    }
+  ],
   "assist": {
     "enabled": true,
     "actions": {

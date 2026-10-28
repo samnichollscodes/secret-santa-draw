@@ -23,7 +23,7 @@ test.describe('before unwrapping', () => {
 
   test('uses the small header on gift pages', async ({ page }) => {
     await page.goto(giftPath({ giver: 'Ann', recipient: 'Ben' }))
-    await expect(page.locator('.brand--small')).toBeVisible()
+    await expect(page.locator('header')).toHaveAttribute('data-size', 'small')
   })
 })
 
@@ -34,7 +34,7 @@ test.describe('unwrapping', () => {
 
     await expect(page.getByRole('heading', { name: 'Ho ho ho!' })).toBeVisible()
     await expect(page.getByText("Ann, you're Secret Santa for…")).toBeVisible()
-    await expect(page.locator('.name-card__name')).toHaveText('Ben')
+    await expect(page.getByTestId('recipient')).toHaveText('Ben')
     await expect(page.getByText('📜 £25 limit')).toBeVisible()
     await expect(page.getByText('Shh… keep it secret!')).toBeVisible()
   })
@@ -42,28 +42,28 @@ test.describe('unwrapping', () => {
   test('shakes the present before it opens', async ({ page }) => {
     await page.goto(giftPath({ giver: 'Ann', recipient: 'Ben' }))
     await present(page).click()
-    await expect(page.locator('.gift-stage--shaking')).toBeVisible()
-    await expect(page.locator('.gift-stage--open')).toBeVisible()
+    await expect(page.locator('[data-stage="shaking"]')).toBeVisible()
+    await expect(page.locator('[data-stage="open"]')).toBeVisible()
   })
 
   test('can only be unwrapped once', async ({ page }) => {
     await page.goto(giftPath({ giver: 'Ann', recipient: 'Ben' }))
     await unwrap(page)
     await expect(present(page)).toBeDisabled()
-    await expect(page.locator('.name-card__name')).toHaveCount(1)
+    await expect(page.getByTestId('recipient')).toHaveCount(1)
   })
 
   test('shows no message box when there is no message', async ({ page }) => {
     await page.goto(giftPath({ giver: 'Ann', recipient: 'Ben' }))
     await unwrap(page)
-    await expect(page.locator('.note')).toHaveCount(0)
+    await expect(page.getByTestId('note')).toHaveCount(0)
   })
 
   test('shows accented names and emoji correctly', async ({ page }) => {
     await page.goto(giftPath({ giver: 'Zoë', recipient: "Seán O'Brien 🎄" }))
     await expect(page.getByRole('heading', { name: 'Merry Christmas, Zoë!' })).toBeVisible()
     await unwrap(page)
-    await expect(page.locator('.name-card__name')).toHaveText("Seán O'Brien 🎄")
+    await expect(page.getByTestId('recipient')).toHaveText("Seán O'Brien 🎄")
   })
 
   test('is wrapped again when the link is reopened', async ({ page }) => {
@@ -82,7 +82,7 @@ test('every link from a real draw opens to the right person', async ({ page }) =
     await page.goto(url)
     await expect(page.getByRole('heading', { name: `Merry Christmas, ${giver}!` })).toBeVisible()
     await unwrap(page)
-    await expect(page.locator('.name-card__name')).toHaveText(recipient)
+    await expect(page.getByTestId('recipient')).toHaveText(recipient)
     await expect(page.getByText('📜 Presents on Christmas Eve')).toBeVisible()
   }
 })
